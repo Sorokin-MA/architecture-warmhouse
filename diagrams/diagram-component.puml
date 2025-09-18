@@ -1,0 +1,29 @@
+@startuml
+!include <C4/C4_Component>
+
+title Микросервис "Управление устройствами"
+
+Component(command_processor, "Обработчик команд", "Go", "Обработка команд\nМаршрутизация к адаптерам\nОчередь команд")
+Component(protocol_adapter, "Адаптер протоколов", "Go", "Трансляция протоколов\nПоддержка MQTT/CoAP/HTTP\nОбработка таймаутов")
+Component(device_registry, "Регистратор устройств", "Go", "Регистрация устройств\nВерификация\nМетаданные устройств")
+Component(device_api, "Внешний интерфейс сервиса", "gRPC/REST", "Аутентификация запросов\nВалидация входных данных")
+
+ContainerDb(devices_db, "Devices DB", "PostgreSQL", "Логи\nСостояния устройств")
+
+System_Ext(api_gateway, "API Gateway", "Входящие запросы")
+System_Ext(partner_devices, "Устройства партнёров")
+
+Rel(api_gateway, device_api, "Команды управления\n(вкл/выкл, настройки)", "gRPC")
+
+Rel(device_api, command_processor, "Валидированные команды", "gRPC")
+Rel(command_processor, protocol_adapter, "Трансформированные команды", "Channel")
+Rel(protocol_adapter, partner_devices, "Протокольные команды", "MQTT/CoAP")
+
+
+Rel(protocol_adapter, device_registry, "Запросы регистрации", "gRPC")
+Rel(device_registry, devices_db, "Сохранение данных", "SQL")
+
+Rel(protocol_adapter, command_processor, "Результаты выполнения", "Channel")
+Rel(command_processor, device_api, "Статус операций", "gRPC")
+
+@enduml
