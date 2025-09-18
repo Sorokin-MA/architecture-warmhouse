@@ -1,0 +1,52 @@
+@startuml
+
+skinparam linetype ortho
+
+entity User {
+    *Id Guid <<generated>>
+    --
+    * UserName String
+    Email String
+    PhoneNumber String
+}
+
+entity Location {
+    *Id Guid <<generated>>
+    --
+    *UserId Guid
+    *Name String
+}
+
+entity Device {
+    *Id Guid <<generated>>
+    --
+    *LocationId Guid
+    *Name String
+    *Type String
+    *ExternalApi String
+    *Status String
+}
+
+entity SchedulerTask {
+    *Id Guid <<generated>>
+    --
+    *DeviceId Guid
+    *SchedulerType Enum
+    *Status String
+    Timestamp DateTime
+    ChangedDeviceId Guid
+}
+
+entity DeviceValues {
+    *DeviceId Guid
+    *ValueType String
+    --
+    Value String
+    Timestamp DateTime
+}
+
+User ||--|{ Location
+Location ||--|{ Device
+Device }|--|{ SchedulerTask
+Device }|--|{ DeviceValues
+@enduml
