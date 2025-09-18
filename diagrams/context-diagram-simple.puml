@@ -1,0 +1,17 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title "Контекстная диаграма системы WarmHouse"
+
+Person(homeowner, "Владелец дома", "Пользователь системы умного дома, который управляет отоплением и мониторит температуру")
+
+System(smarthome, "Система Умный дом", "Позволяет управлять отоплением и мониторить температуру")
+
+System_Ext(temperature_api, "Сервис температуры", "Внешний сервис, предоставляющий данные о температуре с датчиков")
+
+System_Ext(database, "База данных", "PostgreSQL база данных для хранения информации о датчиках")
+
+Rel(homeowner, smarthome, "Управляет датчиками и мониторит температуру через", "REST API")
+Rel(smarthome, temperature_api, "Получает данные о температуре через", "HTTP API")
+Rel(smarthome, database, "Хранит и получает данные о датчиках", "SQL")
+@enduml
